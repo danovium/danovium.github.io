@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>daniel website</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html { 
+            height: 100%; 
+            font-family: 'Poppins', sans-serif; 
+            background: linear-gradient(to bottom,#6b7de2, #f1a579); 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            font-size: 20px; 
+        }
+
+        main {
+            flex-grow: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5%; 
+        }
+
+        .left-content {
+            display: flex;
+            align-items: center;
+            position: relative; 
+        }
+
+        .image-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 30px; 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            position: relative; 
+            z-index: 0; 
+        }
+
+        .image-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-decoration {
+            position: absolute;
+            top: -15px;
+            left: -15px; 
+            width: 180px; 
+            height: 180px; 
+            background: url('https://cdn.discordapp.com/avatar-decoration-presets/a_13913a00bd9990ab4102a3bf069f0f3f.png') no-repeat center center;
+            background-size: contain;
+            pointer-events: none; 
+            z-index: 1; 
+        }
+
+        .text-content {
+            max-width: 500px; 
+            white-space: normal;
+        }
+
+        .text {
+            font-size: 2.5em;
+            font-weight: 600;
+            color: #000;
+        }
+
+        .text2 {
+            font-size: 0.8em; 
+            color: #555;
+        }
+
+        .description {
+            font-size: 1.1em;
+            color: #555;
+            margin-top: 5px; 
+        }
+
+        .clock-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-weight: 300;
+            margin-left: 20px; 
+        }
+
+        .clock {
+            font-size: 6em; 
+            color: #333;
+            font-weight: 300; 
+        }
+
+        .timezone {
+            font-size: 1.2em;
+            font-weight: 600; 
+            color: #333;
+            margin-top: -5px; 
+        }
+
+        footer {
+            text-align: right;
+            padding: 10px 20px;
+            color: #808080;
+        }
+
+        .mobile main {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .mobile .left-content {
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+
+        .mobile .clock-container {
+            margin-left: 0;
+        }
+
+        .mobile .clock {
+            font-size: 4em; 
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="left-content">
+            <div class="avatar-decoration" id="avatar-decoration"></div> 
+            <div class="image-circle" id="profile-image">
+                <img src="/img/profile.png" alt="Profile Picture" id="profile-pic">
+            </div>
+            <div class="text-content">
+                <div class="text">daniel</div>
+                <div class="text2">@danovium - he/him</div>
+                <div class="description">uhhhhhhhhhhhhh</div>
+            </div>
+        </div>
+        <div class="clock-container">
+            <div class="clock" id="clock">14:48</div>
+            <div class="timezone">UTC+2 • (My Timezone)</div> 
+        </div>
+    </main>
+
+   
+    <footer>
+        Made with ❤️ • &copy; Daniel 2025
+    </footer>
+
+   
+    <script>
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getUTCHours() + 2).padStart(2, '0'); 
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}`;
+        }
+
+        function detectMobile() {
+            const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+            if (isMobile) {
+                document.body.classList.add('mobile'); 
+            }
+        }
+
+        setInterval(updateClock, 1000); 
+        updateClock(); 
+        detectMobile(); 
+    </script>
+
+</body>
+</html>
