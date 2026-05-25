@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discord OAuth</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 2em; max-width: 500px; margin: auto; }
+    .msg { margin: 1.5em 0; }
+    code { background: #eee; padding: 2px 4px; border-radius: 3px; }
+    footer {
+      color: #888;
+      background: #f6f6f6;
+      border-top: 1px solid #eee;
+      font-size: 0.95em;
+      margin-top: 3em;
+      padding: 1.2em 1em 1em 1em;
+      text-align: center;
+      border-radius: 0 0 12px 12px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Discord OAuth</h2>
+  <div id="status" class="msg">Loading...</div>
+  <footer>
+    No data is stored on this site except your Switch's IP address in your browser, used only to redirect the OAuth code back to your console.
+  </footer>
+  <script>
+    // Helper to parse query params
+    function getQueryParams() {
+      const params = {};
+      window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(_, k, v) {
+        params[decodeURIComponent(k)] = decodeURIComponent(v.replace(/\+/g, " "));
+      });
+      return params;
+    }
+
+    function redirectToOAuth(authUrl, ip) {
+      // Save ip for later
+      if (ip) localStorage.setItem('switch_ip', ip);
+      document.getElementById('status').innerHTML = "Redirecting to Discord OAuth...";
+      window.location.replace(authUrl);
+    }
+
+    function redirectToSwitchCallback(params, ip) {
+      if (!ip) {
+        document.getElementById('status').innerHTML = "Error: No IP found in localStorage.";
+        return;
+      }
+      let query = Object.keys(params)
+        .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
+        .join('&');
+      let callbackUrl = `http://${ip}:45601/callback?${query}`;
+      document.getElementById('status').innerHTML = `
+        Sending authorization code to Switch...<br>
+        <small>If nothing happens, ensure your Switch is on the network.</small>
+      `;
+      setTimeout(() => {
+        window.location.replace(callbackUrl);
+      }, 1200);
+    }
+
+    (function main() {
+      const params = getQueryParams();
+
+      // If we have code (and maybe state), we're on the redirect page after Discord.
+      if (params.code) {
+        const ip = localStorage.getItem('switch_ip');
+        redirectToSwitchCallback(params, ip);
+        return;
+      }
+
+      // Otherwise, we're on the initial QR/discord page
+      const auth = params.auth;
+      const ip = params.ip;
+      if (auth && ip) {
+        redirectToOAuth(auth, ip);
+      } else {
+        document.getElementById('status').innerHTML = `
+          <b>Missing parameters.</b><br>
+          This page expects <code>auth</code> and <code>ip</code> query params.<br>
+          Example: <code>?auth=&lt;encoded_url&gt;&ip=&lt;switch_ip&gt;</code>
+        `;
+      }
+    })();
+  </script>
+</body>
+</html>
